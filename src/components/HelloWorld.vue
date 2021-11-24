@@ -31,10 +31,16 @@
 </template>
 
 <script>
+const axios = require('axios');
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  async beforeMount() {
+    let response = await axios.get('/.netlify/functions/hello-world')
+    console.log(response.data.message)
   }
 }
 </script>
