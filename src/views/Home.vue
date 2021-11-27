@@ -13,7 +13,7 @@
         <tr
         v-for="entity in this.$store.getters.allRefEntities"
             :key="entity.ref['@ref'].id">
-            <td><b-link :href="'/refentity/' + entity.ref['@ref'].id">{{entity.data.label}}</b-link></td>
+            <td><router-link :to="{ name: 'RefEntity', params: { RefEntityId: entity.ref['@ref'].id } }">{{entity.data.label}}</router-link></td>
             <td>{{entity.data.gender}}</td>
             <td>{{entity.data.field}}</td>
         </tr>

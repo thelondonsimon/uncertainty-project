@@ -6,11 +6,12 @@
           <div class="container">
             <div class="row">
               <div class="col-8 pl-0">
-                <a href="/">Home</a> &nbsp; / &nbsp;
+                <router-link to="/">Home</router-link> &nbsp; / &nbsp;
                 <span>{{this.RefEntity.data.label}}</span>
               </div>
               <div class="col text-right pr-0">
-                <a :href="getPrevLinkHref()">Prev</a> &nbsp; | &nbsp; <a :href="getNextLinkHref()">Next</a>
+                <router-link :to="{ name: 'RefEntity', params: { RefEntityId: getPrevLinkId() }}">Prev</router-link> &nbsp; | &nbsp;
+                <router-link :to="'/refentity/' + getNextLinkId()">Next</router-link>
               </div>
             </div>
           </div>
@@ -87,40 +88,43 @@ export default {
       const lookup = {'Alexa': 'success', 'Google Assistant': 'danger', 'Siri': 'primary'}
       return lookup[platform]
     },
-    getPrevLinkHref() {
+    getPrevLinkId() {
       let curIndex = 0
-      let prevId = 0
       for (let i = 0; i < this.$store.getters.allRefEntities.length; i++) {
         if (this.$store.getters.allRefEntities[i].ref['@ref'].id == this.$route.params.RefEntityId) {
           curIndex = i
         }
       }
       if (curIndex == 0) {
-        prevId = this.$store.getters.allRefEntities[this.$store.getters.allRefEntities.length - 1].ref['@ref'].id
+        return this.$store.getters.allRefEntities[this.$store.getters.allRefEntities.length - 1].ref['@ref'].id
       } else {
-        prevId = this.$store.getters.allRefEntities[curIndex - 1].ref['@ref'].id
+        return this.$store.getters.allRefEntities[curIndex - 1].ref['@ref'].id
       }
-      return '/refentity/' + prevId
     },
-    getNextLinkHref() {
+    getNextLinkId() {
       let curIndex = 0
-      let nextId = 0
       for (let i = 0; i < this.$store.getters.allRefEntities.length; i++) {
         if (this.$store.getters.allRefEntities[i].ref['@ref'].id == this.$route.params.RefEntityId) {
           curIndex = i
         }
       }
       if (curIndex == this.$store.getters.allRefEntities.length - 1) {
-        nextId = 0
+        return this.$store.getters.allRefEntities[0].ref['@ref'].id
       } else {
-        nextId = this.$store.getters.allRefEntities[curIndex + 1].ref['@ref'].id
+        return this.$store.getters.allRefEntities[curIndex + 1].ref['@ref'].id
       }
-      return '/refentity/' + nextId
     }
   },
   async created() {
     await this.refreshRefEntity()
     this.loading = false
+  },
+  watch: {
+    '$route.params.RefEntityId': async function() {
+      this.loading = true
+      await this.refreshRefEntity()
+      this.loading = false
+    }
   }
 }
 </script>
